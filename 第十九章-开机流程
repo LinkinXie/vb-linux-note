@@ -1,0 +1,10 @@
+# Linux 开机流程
+1. BIOS 加载， 取得第一个可开机装置;
+2. 读取开机装置的MBR 的 boot loader (grub)
+3. load kernel
+4. call systemd, follow default.target
+
+BIOS -> INT 13 -> MBR Boot loader -> other os loader
+
+other os loader |-> system kernel.                        |-> load root directory -> systemd
+                |-> initramfs(initrd) -> load disk module.| 
