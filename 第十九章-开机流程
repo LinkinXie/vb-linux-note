@@ -6,5 +6,29 @@
 
 BIOS -> INT 13 -> MBR Boot loader -> other os loader
 
-other os loader |-> system kernel.                        |-> load root directory -> systemd
-                |-> initramfs(initrd) -> load disk module.| 
+other os loader |-> system kernel.                                 |-> load root directory -> systemd
+                |-> initramfs(initrd) -> load disk module(磁盘驱动).| 
+
+
+虚拟文件系统 (Initial RAM Disk 或Initial RAM Filesystem) 
+  /boot/initrd 或 /boot/initramfs
+  可以通过 boot loader 加载。 仿真成根目录。
+  
+  
+# 19.1.3
+第一支程序 systemd 
+最主要的功能就是准备软件执行的环境，包括系统的主机名、网络设定、语系处理、文件系统格式及其他服务的启动
+systemd 已经舍弃沿用多年的system V 的runlevel
+
+systemd 的处理流程
+/etc/systemd/system/default.target  --> graphical.target
+
+约略分析一下『 systemctl list-dependencies graphical.target 』所输出的相依属性服务，基本上我们
+CentOS 7.x 的systemd 开机流程大约是这样：
+1. local-fs.target + swap.target：这两个target 主要在挂载本机/etc/fstab 里面所规范的文件系统与相关的内存
+置换空间。
+2. sysinit.target：这个target 主要在侦测硬件，加载所需要的核心模块等动作。
+3. basic.target：加载主要的外围硬件驱动程序与防火墙相关任务
+4. multi-user.target 底下的其它一般系统或网络服务的加载
+5. 图形界面相关服务如gdm.service 等其他服务的加载
+
